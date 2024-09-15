@@ -1,14 +1,14 @@
 [
 {
   "modid": "Orebfuscator",
-  "name": "Example Mod",
+  "name": "Orebfuscator",
   "description": "",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["shsa", "xamora"],
+  "credits": "Shsa https://github.com/shsa",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

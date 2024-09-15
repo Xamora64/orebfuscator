@@ -1,9 +1,8 @@
-package Orebfuscator;
+package orebfuscator;
 
 import java.net.SocketAddress;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;

@@ -1,16 +1,9 @@
-package Orebfuscator;
+package orebfuscator;
 
 import io.netty.channel.Channel;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Queue;
-
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 
 public class PlayerInjector {
 

@@ -1,7 +1,7 @@
 [
 {
-  "modid": "Orebfuscator",
-  "name": "Orebfuscator",
+  "modid": "orebfuscator",
+  "name": "",
   "description": "",
   "version": "${version}",
   "mcversion": "${mcversion}",

@@ -1,13 +1,9 @@
-package Orebfuscator;
+package orebfuscator;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
-import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 public class MapChunkBulkObfuscator 
 {
@@ -16,13 +12,13 @@ public class MapChunkBulkObfuscator
 	
 	public static Field fieldHasSky;
     
-	// 1110011 - набор блоков (ExtendedBlockStorage.blockLSBArray) по высоте (1 - есть блок, 0 - нет блока)
+	// 1110011 - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (ExtendedBlockStorage.blockLSBArray) пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (1 - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, 0 - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
 	public static Field fieldStatusLSB = null;
 	
-	// 0001110 - набор блоков (ExtendedBlockStorage.blockMSBArray) по высоте (1 - есть блок, 0 - нет блока)
+	// 0001110 - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (ExtendedBlockStorage.blockMSBArray) пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (1 - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, 0 - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
 	public static Field fieldStatusMSB;
 	
-	// -- массив данных
+	// -- пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	public static Field fieldData;
 	public static Field field_149268_i;
 	

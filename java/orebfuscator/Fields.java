@@ -1,4 +1,4 @@
-package Orebfuscator;
+package orebfuscator;
 
 import java.lang.reflect.Field;
 

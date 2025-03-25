@@ -3,42 +3,42 @@ package orebfuscator;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class PlayerHandler 
-{
+public class PlayerHandler {
+
 	public Map<EntityPlayer, BlockBreakInfo> list = new HashMap<EntityPlayer, BlockBreakInfo>();
 	
-	public static class BlockBreakInfo
-	{
+	public static class BlockBreakInfo {
 		public int x;
 		public int y;
 		public int z;
 		
-		public void update(final int x, final int y, final int z)
-		{
+		public void update(final int x, final int y, final int z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
 		}
 	}
-	
-	public boolean isTransparent(final World world, final int x, final int y, final int z)
-	{
-		return Options.isBlockTransparent(BlockHelper.getBlockID(world, x, y, z));
+
+	public boolean isTransparent(final World world, final int x, final int y, final int z) {
+		if (y < 0 || y > 255)
+			return true;
+		return Options.isBlockTransparent(Block.getIdFromBlock(world.getBlock(x, y, z)));
 	}
 
-	public void updateBlock(final World world, final int x, final int y, final int z)
-	{
+	public void updateBlock(final World world, final int x, final int y, final int z) {
 		if (isTransparent(world, x, y, z))
 			return;
-		
-		if (Options.isObfuscated(BlockHelper.getBlockID(world, x, y, z)))
-		{
+
+		Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+		if (Options.isObfuscated(BlockHelper.getBlockID(chunk, x & 15, y, z & 15))) {
 			if (isTransparent(world, x - 1, y, z) || isTransparent(world, x + 1, y, z) || 
 				isTransparent(world, x, y - 1, z) || isTransparent(world, x, y + 1, z) ||
 				isTransparent(world, x, y, z - 1) || isTransparent(world, x, y, z + 1))
@@ -48,21 +48,17 @@ public class PlayerHandler
 		}
 	}
 
-	public void update(EntityPlayer player, int x, int y, int z)
-	{
+	public void update(EntityPlayer player, int x, int y, int z) {
     	BlockBreakInfo info = list.get(player);
-    	if (info == null)
-    	{
+    	if (info == null) {
     		info = new BlockBreakInfo();
     		list.put(player, info);
     	}
 
-    	if (info.x != x || info.y != y || info.z != z)
-    	{
+    	if (info.x != x || info.y != y || info.z != z) {
     		info.update(x, y, z);
     		
-    		for (int i = 0; i < Options.updateOffsets.size(); i++)
-    		{
+    		for (int i = 0; i < Options.updateOffsets.size(); i++) {
     			Options.Offset offset = Options.updateOffsets.get(i);
 				updateBlock(player.worldObj, x + offset.x, y + offset.y, z + offset.z);
     		}
@@ -70,9 +66,9 @@ public class PlayerHandler
 	}
 	
     @SubscribeEvent
-    public void onBreakSpeed(PlayerEvent.BreakSpeed event)
-    {
-    	update(event.entityPlayer, event.x, event.y, event.z);
+    public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+    	//update(event.entityPlayer, event.x, event.y, event.z);
+    	System.out.println("x: " + ((event.x % 16) + 16) % 16 + " y: " + event.y + " z: " + ((event.z % 16) + 16) % 16);
     }
     
     @SubscribeEvent

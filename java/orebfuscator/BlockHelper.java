@@ -13,9 +13,7 @@ public class BlockHelper
             int l = extendedblockstorage.getBlockLSBArray()[y << 8 | z << 4 | x] & 255;
 
             if (extendedblockstorage.getBlockMSBArray() != null)
-            {
                 l |= extendedblockstorage.getBlockMSBArray().get(x, y, z) << 8;
-            }
 
             return l;
         }
@@ -26,27 +24,7 @@ public class BlockHelper
 	{
         ExtendedBlockStorage[] storageArrays = chunk.getBlockStorageArray();	                
         if (y >> 4 < storageArrays.length)
-        {
             return getBlockExtId(storageArrays[y >> 4], x, y & 15, z);
-        }
-        return 0;
-	}
-	
-	public static int getBlockID(final World world, final int x, final int y, final int z)
-	{
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256)
-        {
-            Chunk chunk = null;
-
-            try
-            {
-                chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
-                return getBlockID(chunk, x & 15, y, z & 15);
-            }
-            catch (Throwable throwable)
-            {
-            }
-        }
         return 0;
 	}
 }

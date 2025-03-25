@@ -8,10 +8,8 @@ public class Fields
 	{
 		Field[] fields = clazz.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++)
-		{
 			if (fields[i].getName().equals(fieldName))
 				return i;
-		}
 		return -1;
 	}
 	
@@ -74,8 +72,7 @@ public class Fields
 	
 	public static void setValue(Object instance, Field field, Object value)
 	{
-		try 
-		{
+		try {
 			field.setAccessible(true);
 			field.set(instance, value);
 		} 

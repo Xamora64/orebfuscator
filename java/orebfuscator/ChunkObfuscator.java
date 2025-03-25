@@ -1,33 +1,39 @@
 package orebfuscator;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChunkObfuscator
 {
-	// ?????????? ? ??????? ??????. ?????? - ??? ????? ???????? 16?16?16, ?????? ????????????? ???? ??? ??????
-	// Chunk ??????? ?? 16 ??????, ?????? ????? 16x16x256
-	//public boolean[] listLSB = new boolean[16];
-	//public boolean[] listMSB = new boolean[16];
+	// Information about the presence of a section. Sections are blocks of size 16×16×16, arranged on top of each other
+	// A chunk consists of 16 sections, the chunk size is 16x16x256
+	// public boolean[] listLSB = new boolean[16];
+	// public boolean[] listMSB = new boolean[16];
 
-	// offsetsLSB[] - ???????? ?????? ??????, ? ??????? ?????????? ????? ???????? 16x16x16 ?????????? ?????? 8 ??? BlockID
-	// ?????? ?????? 16*16*16 = 4096 ????
+	// offsetsLSB[] - contains a list of sections where blocks of size 16x16x16 start,
+	// containing the first 8 bits of the BlockID
+	// Section size: 16*16*16 = 4096 bytes
 	public int[] offsetsLSB = new int[16];
 
-	// ?????? NibbleArrays ?????????? ExtendedBlockStorage.blockMetadataArray
-	// ?????? ??????? (16*16*16)/2 = 2048 (????? ???????, ?.?. ? ????? ????? ?????????? ??? ???????? ?? 4 ????)
+	// Start of the NibbleArrays containing ExtendedBlockStorage.blockMetadataArray
+	// Array size: (16*16*16)/2 = 2048 (divided in half because one byte stores two values of 4 bits each)
 	public int[] offsetsMetadata = new int[16];
 
-	// ?????? NibbleArray ??????????? ExtendedBlockStorage.blocklightArray
+	// Start of the NibbleArray containing ExtendedBlockStorage.blocklightArray
 	public int[] offsetsBlocklight = new int[16];
 
-	// NibbleArray ExtendedBlockStorage.blockMSBArray
+	// NibbleArray for ExtendedBlockStorage.blockMSBArray
 	public int[] offsetsMSB = new int[16];
 
 	public int startX;
 	public int startZ;
 
-	// ???????????? ??????+1 ??????
+	// Maximum index+1 of the section
 	public int len;
 	public byte[] data;
 
@@ -39,13 +45,10 @@ public class ChunkObfuscator
 		this.data = data;
 		int countLSB = 0;
 		len = 0;
-		int l;
-		int i;
-		for (i = 0; i < 16; ++i)
-		{
+		int l, i;
+		for (i = 0; i < 16; ++i) {
 			l = sectionLSB >> i & 1;
-			if (l == 1)
-			{
+			if (l == 1) {
 				offsetsLSB[i] = pos;
 				pos += 4096;
 
@@ -53,24 +56,18 @@ public class ChunkObfuscator
 				len = i + 1;
 			}
 			else
-			{
 				offsetsLSB[i] = -1;
-			}
 		}
 
-		for (i = 0; i < len; i++)
-		{
-			if (offsetsLSB[i] > -1)
-			{
+		for (i = 0; i < len; i++) {
+			if (offsetsLSB[i] > -1) {
 				offsetsMetadata[i] = pos;
 				pos += 2048;
 			}
 		}
 
-		for (i = 0; i < len; i++)
-		{
-			if (offsetsLSB[i] > -1)
-			{
+		for (i = 0; i < len; i++) {
+			if (offsetsLSB[i] > -1) {
 				offsetsBlocklight[i] = pos;
 				pos += 2048;
 			}
@@ -78,24 +75,19 @@ public class ChunkObfuscator
 
 
 		//if (!world.provider.hasNoSky)
-		if (hasSky)
-		{
-			// ???? ???? ????, ?? ? ?????? ????? ?????? ExtendedBlockStorage.skylightArray
+		if (hasSky) {
+			// If there is sky, then the buffer will contain the ExtendedBlockStorage.skylightArray array
 			pos += countLSB * 2048;
 		}
 
-		for (i = 0; i < len; i++)
-		{
+		for (i = 0; i < len; i++) {
 			l = sectionMSB >> i & 1;
-			if (l == 1)
-			{
+			if (l == 1) {
 				offsetsMSB[i] = pos;
 				pos += 2048;
 			}
 			else
-			{
 				offsetsMSB[i] = -1;
-			}
 		}
 
 		// biome info
@@ -107,18 +99,14 @@ public class ChunkObfuscator
 			{
 				l = i << 4;
 				for (int x = 0; x < 16; x++)
-				{
 					for (int y = 0; y < 16; y++)
-					{
 						for (int z = 0; z < 16; z++)
-						{
-							if (neetObfuscate(x, l | y, z))
-							{
+							if (needObfuscate(world, chunkX, chunkZ, x, l | y, z)) {
+								int randomBlock = Options.worldOptions.getRandomID();
+								if (chunkX == -13 && chunkZ == 7)
+									System.out.println("nouveau bloc: " + randomBlock + " (" + x + "," + (l | y) + "," + z + ")" + " x:" + chunkX + " z:" + chunkZ);
 								setBlockID(x, l | y, z, Options.worldOptions.getRandomID());
 							}
-						}
-					}
-				}
 			}
 		}
 
@@ -145,66 +133,57 @@ public class ChunkObfuscator
 		if (offsetsMSB[sectionIndex] > -1) {
 			int msbByteIndex = offsetsMSB[sectionIndex] + (blockIndex >> 1);
 			int msbByte = data[msbByteIndex] & 0xFF;
-			if ((blockIndex & 1) == 0) {
+			if ((blockIndex & 1) == 0)
 				msb = msbByte & 0x0F;
-			} else {
+			else
 				msb = (msbByte >> 4) & 0x0F;
-			}
 		}
 
 		return (msb << 8) | lsb;
 	}
 
-	public void setBlockID(int x, int y, int z, int blockID)
-	{
+	public void setBlockID(int x, int y, int z, int blockID) {
 		int section = y >> 4;
-		if (this.offsetsLSB[section] > -1)
-		{
+		if (this.offsetsLSB[section] > -1) {
 			y = y & 15;
 
 			this.data[this.offsetsLSB[section] + (y << 8 | z << 4 | x)] = (byte) (blockID & 255);
-			if (this.offsetsMSB[section] > -1)
-			{
-				int l = y << 4 | z << 4 | x;
+			if (this.offsetsMSB[section] > -1) {
+				int l = (y << 8) | (z << 4) | x;
 				int i1 = l >> 1;
 				int j1 = l & 1;
 				int pos = this.offsetsMSB[section] + i1;
 				if (j1 == 0)
-				{
 					this.data[pos] = (byte)(this.data[pos] & 240 | blockID & 15);
-				}
 				else
-				{
 					this.data[pos] = (byte)(this.data[pos] & 15 | (blockID & 15) << 4);
-				}
 			}
 		}
 	}
 
-	public boolean isTransparent(int x, int y, int z) {
-		if (x < 0 || x > 15 || y < 0 || y > 255 || z < 0 || z > 15) {
+	public boolean isTransparent(World world, int chunkX, int chunkZ, int x, int y, int z) {
+		if (x < 0 || x > 15 || y < 0 || y > 255 || z < 0 || z > 15)
 			return true;
-		}
+
 		int blockID = getBlockID(x, y, z);
-		return Options.isTransparent(Block.getBlockById(blockID));
+		Block block = Block.getBlockById(blockID);
+		return Options.isTransparent(block);
 	}
 
-	public boolean neetObfuscate(int x, int y, int z) {
+	public boolean needObfuscate(World world, int chunkX, int chunkZ, int x, int y, int z) {
 		if (y > Options.worldOptions.maxObfuscateHeight)
 			return false;
 
-		int blockID = getBlockID(x, y, z);
-		if (!Options.isObfuscated(blockID)) {
+		if (!Options.isObfuscated(getBlockID(x, y, z)))
 			return false;
-		}
 
 		return !(
-				isTransparent(x - 1, y, z) ||
-						isTransparent(x + 1, y, z) ||
-						isTransparent(x, y - 1, z) ||
-						isTransparent(x, y + 1, z) ||
-						isTransparent(x, y, z - 1) ||
-						isTransparent(x, y, z + 1)
+				isTransparent(world, chunkX, chunkZ, x - 1, y, z) ||
+				isTransparent(world, chunkX, chunkZ,x + 1, y, z) ||
+				isTransparent(world, chunkX, chunkZ, x, y - 1, z) ||
+				isTransparent(world, chunkX, chunkZ, x, y + 1, z) ||
+				isTransparent(world, chunkX, chunkZ, x, y, z - 1) ||
+				isTransparent(world, chunkX, chunkZ, x, y, z + 1)
 		);
 	}
 }

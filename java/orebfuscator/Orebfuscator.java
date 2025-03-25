@@ -17,13 +17,12 @@ public class Orebfuscator
     public static final String VERSION = "0.5";
 
     @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
+    public void init(FMLInitializationEvent event) {
+
     }
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
+    public void preInit(FMLPreInitializationEvent event) {
     	FMLCommonHandler.instance().bus().register(this);
     	MinecraftForge.EVENT_BUS.register(new PlayerHandler());
 
@@ -31,14 +30,12 @@ public class Orebfuscator
     }
     
     @SubscribeEvent
-    public void onPlayerLogged(PlayerEvent.PlayerLoggedInEvent event)
-    {
+    public void onPlayerLogged(PlayerEvent.PlayerLoggedInEvent event) {
     	PlayerInjector.hookPlayer((EntityPlayerMP)event.player);
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event)
-    {
+    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
     	PlayerInjector.cleanupPlayer((EntityPlayerMP) event.player);
     }
 }

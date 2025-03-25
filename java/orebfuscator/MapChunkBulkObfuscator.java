@@ -53,22 +53,16 @@ public class MapChunkBulkObfuscator
         
         Options.worldOptions = Options.getWorldOptions(world);
 
-        if (Options.isBuildCraft)
-        {
+        if (Options.isBuildCraft) {
         	byte[] data = (byte[]) Fields.getValue(packet, field_149268_i);
         	int pos = 0;
             for (int i = 0; i < statusLSB.length; i++)
-            {
             	pos = info.obfuscate(world, chunkX[i], chunkZ[i], hasSky, statusLSB[i], statusMSB[i], data, pos);
-            }
         }
-        else
-        {
+        else {
         	byte[][] dataArray = (byte[][]) Fields.getValue(packet, fieldData);
             for (int i = 0; i < statusLSB.length; i++)
-            {
             	info.obfuscate(world, chunkX[i], chunkZ[i], hasSky, statusLSB[i], statusMSB[i], dataArray[i], 0);
-            }
         }
         
         return packet;

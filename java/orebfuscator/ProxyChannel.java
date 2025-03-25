@@ -21,16 +21,13 @@ public class ProxyChannel implements Channel
 	public Channel channel;
 	public EntityPlayerMP player;
 	
-	public ProxyChannel(Channel channel, EntityPlayerMP player)
-	{
+	public ProxyChannel(Channel channel, EntityPlayerMP player) {
 		this.channel = channel;
 		this.player = player;
 	}
 
-	public Object updateMsg(Object msg)
-	{
-		if (msg instanceof S26PacketMapChunkBulk) 
-		{
+	public Object updateMsg(Object msg) {
+		if (msg instanceof S26PacketMapChunkBulk) {
 			S26PacketMapChunkBulk packet = (S26PacketMapChunkBulk)msg;
 			return MapChunkBulkObfuscator.obfuscate(player.worldObj, packet);
 		}

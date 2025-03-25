@@ -18,9 +18,7 @@ public class Log
     public static void log(Level level, String format, Object... data)
     {
         if (!configured)
-        {
             configureLogging();
-        }
         myLog.log(level, String.format(format, data));
     }
     

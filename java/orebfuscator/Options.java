@@ -18,8 +18,7 @@ public class Options
 	{
 		public World worldObj;
 		public String name;
-		public WorldOptions(World world)
-		{
+		public WorldOptions(World world) {
 			this.worldObj = world;
 			this.name = getWorldName(world);
 		}
@@ -31,23 +30,18 @@ public class Options
 		private int[] rndBlocksCount;
 
 		private int rndBlockIndex = 0;
-		public int getRandomID()
-		{
-			while (true)
-			{
+		public int getRandomID() {
+			while (true) {
 				rndBlockIndex++;
 				if (rndBlockIndex >= rndBlocks.length)
 					rndBlockIndex = 0;
 				
-				if (rndBlocksCount[rndBlockIndex] >= rndBlocksInterval[rndBlockIndex])
-				{
+				if (rndBlocksCount[rndBlockIndex] >= rndBlocksInterval[rndBlockIndex]) {
 					rndBlocksCount[rndBlockIndex] = 1;
 					return rndBlocks[rndBlockIndex];
 				}
 				else
-				{
 					rndBlocksCount[rndBlockIndex]++;
-				}
 			}
 		}
 		
@@ -57,8 +51,7 @@ public class Options
 	    	
 			String[] list = config.getStringList("randomBlocks", this.name, blockList, "[blockID]:[interval]");
 			int count = validateBlockList(list);
-			if (count == 0)
-			{
+			if (count == 0) {
 				if (list.length == 0)
 					Log.error("%s.randomBlocks.length == 0", this.name);
 				else
@@ -72,15 +65,12 @@ public class Options
 			rndBlocksInterval = new int[count];
 			rndBlocksCount = new int[count];
 			int i = 0;
-			for (String value : list)
-			{
+			for (String value : list) {
 				String[] values = value.split(":");
-				try
-				{
+				try {
 					int v0 = Integer.valueOf(values[0]);
 					int v1 = Integer.valueOf(values[1]);
-					if (v0 >= 0 && v0 < 4096 && v1 > 0)
-					{
+					if (v0 >= 0 && v0 < 4096 && v1 > 0) {
 						rndBlocks[i] = v0;
 						rndBlocksCount[i] = 1;
 						rndBlocksInterval[i] = v1;
@@ -91,45 +81,36 @@ public class Options
 			}
 		}
 		
-		private int validateBlockList(String[] list)
-		{
+		private int validateBlockList(String[] list) {
 			int count = 0;
-			for (int i = 0; i < list.length; i++)
-			{
+			for (int i = 0; i < list.length; i++) {
 				String[] values = list[i].split(":");
-				try
-				{
+				try {
 					int v0 = Integer.valueOf(values[0]);
 					int v1 = Integer.valueOf(values[1]);
 					if (v0 >= 0 && v0 < 4096 && v1 > 0)
 						count++;
 				}
-				catch(Exception e)
-				{
-				}
+				catch(Exception e) { }
 			}
 			return count;
 		}
 	}
 
-	public static String getWorldName(World world)
-	{
+	public static String getWorldName(World world) {
 		return world.provider.getClass().getSimpleName();
 	}
 	
 	private static HashMap<String, WorldOptions> worlds = new HashMap<String, WorldOptions>();
-	public static WorldOptions getWorldOptions(World world)
-	{
+	public static WorldOptions getWorldOptions(World world) {
 		String name = getWorldName(world); 
 		WorldOptions options = worlds.get(name);
-		if (options == null)
-		{
+		if (options == null) {
 	    	Configuration config = new Configuration(configFile, false);
 
 	    	options = new WorldOptions(world);
 	    	
-	    	if (world.provider instanceof WorldProviderSurface)
-	    	{
+	    	if (world.provider instanceof WorldProviderSurface) {
 	    		options.load(config, new String[] {
 		    			getID(Blocks.air, 1),
 		    			getID(Blocks.gold_ore, 16),
@@ -143,8 +124,7 @@ public class Options
 		    			getID(Blocks.mob_spawner, 1000),
 	    		});
 	    	}
-	    	if (world.provider instanceof WorldProviderHell)
-	    	{
+	    	if (world.provider instanceof WorldProviderHell) {
 				options.load(config, new String[] {
 		    			getID(Blocks.air, 1),
 		    			getID(Blocks.glowstone, 16),
@@ -157,16 +137,13 @@ public class Options
 		    			getID(Blocks.mob_spawner, 1000),
 		    	});
 	    	}
-	    	else
-	    	if (world.provider instanceof WorldProviderEnd)
-	    	{
+	    	else if (world.provider instanceof WorldProviderEnd) {
 				options.load(config, new String[] {
 		    			getID(Blocks.air, 1),
 		    			getID(Blocks.end_stone, 16),
 		    	});
 	    	}
-	    	else
-	    	{
+	    	else {
 	    		options.load(config, new String[] {
 		    			getID(Blocks.air, 1),
 		    			getID(Blocks.gold_ore, 16),
@@ -195,8 +172,7 @@ public class Options
 	
 	public static boolean isBuildCraft = false; 
 	
-	public static class Offset
-	{
+	public static class Offset {
 		public int x;
 		public int y;
 		public int z;
@@ -206,8 +182,7 @@ public class Options
 	
 	public static File configFile;
 	
-	public static void load(File modDir)
-	{
+	public static void load(File modDir) {
     	configFile = new File(modDir, Orebfuscator.MODID + ".cfg");
     	Configuration config = new Configuration(configFile, false);
     	
@@ -226,17 +201,13 @@ public class Options
     	*/
     	
     	int updateRadius = config.getInt("updateRadius", "Options", 2, 1, 5, "How much blocks update after block break");
-    	for (int x = -updateRadius; x <= updateRadius; x++)
-    	{
-    		for (int y = -updateRadius; y <= updateRadius; y++)
-    		{
-    			for (int z = -updateRadius; z <= updateRadius; z++)
-    			{
+    	for (int x = -updateRadius; x <= updateRadius; x++) {
+    		for (int y = -updateRadius; y <= updateRadius; y++) {
+    			for (int z = -updateRadius; z <= updateRadius; z++) {
     				if (x == 0 && y == 0 && z == 0)
     					continue;
     				
-    				if ((x*x + y*y + z*z) <= updateRadius*2)
-    				{
+    				if ((x*x + y*y + z*z) <= updateRadius*2) {
     					Offset offset = new Offset();
     					offset.x = x;
     					offset.y = y;
@@ -264,16 +235,10 @@ public class Options
     	}).getIntList();
 		
 		if (list.length == 0)
-		{
 			for (int i = 0; i < obfuscateBlocks.length; i++)
-			{
 				obfuscateBlocks[i] = true;
-			}
-		}
 		else
-		{
 			updateList(obfuscateBlocks, list);
-		}
 			
     	
 		list = config.get("Options", "transparentBlocks", new int[] {}).getIntList();
@@ -282,26 +247,19 @@ public class Options
 		config.save();
 	}
 
-	private static void updateList(boolean[] blocks, int[] list)
-	{
+	private static void updateList(boolean[] blocks, int[] list) {
 		for (int i = 0; i < blocks.length; i++)
-		{
 			blocks[i] = false;
-		}
 		for (int i = 0; i < list.length; i++)
-		{
 			if (list[i] >= 0 || list[i] < blocks.length)
-			blocks[list[i]] = true;
-		}
+				blocks[list[i]] = true;
 	}
 	
-	private static int getID(Block block)
-	{
+	private static int getID(Block block) {
 		return Block.getIdFromBlock(block);
 	}
 	
-	private static String getID(Block block, int interval)
-	{
+	private static String getID(Block block, int interval) {
 		return String.format("%d:%d", Block.getIdFromBlock(block), interval);
 	}
 	
@@ -315,29 +273,20 @@ public class Options
 	
 	private static boolean[] _transparentBlocks = new boolean[4096];
 	private static boolean TransparentCached = false;
-	public static boolean isBlockTransparent(int id) 
-	{
+	public static boolean isBlockTransparent(int id) {
 		if (id < 0)
 			return true;
-		if (!TransparentCached) 
-		{
+		if (!TransparentCached) {
 			// Generate TransparentBlocks by reading them from Minecraft
 			for (int i = 0; i < _transparentBlocks.length; i++) {
-				if (transparentBlocks[i]) 
-				{
+				if (transparentBlocks[i])
 					_transparentBlocks[i] = true;
-				}
-				else
-				{
+				else {
 					Block block = Block.getBlockById(i);
 					if (block == null)
-					{
 						_transparentBlocks[i] = true;
-					}
 					else
-					{
 						_transparentBlocks[i] = !block.isNormalCube();
-					}
 				}
 			}
 			TransparentCached = true;
@@ -345,8 +294,7 @@ public class Options
 		return _transparentBlocks[id];
 	}
 	
-	public static boolean isTransparent(Block block)
-	{
+	public static boolean isTransparent(Block block) {
 		return isBlockTransparent(Block.getIdFromBlock(block));
 	}
 }

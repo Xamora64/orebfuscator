@@ -5,3 +5,7 @@ Fix issue and remove random crash in chunk load
 download: https://github.com/Xamora64/orebfuscator/releases<br>
 original fork: https://github.com/shsa/orebfuscator<br>
 original idea: https://github.com/Shevchik/orebfuscator
+
+## TO DO:
+- Obfuscate bloc between chunk
+- Obfuscate caves and hidden base

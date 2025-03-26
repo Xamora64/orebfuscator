@@ -101,12 +101,8 @@ public class ChunkObfuscator
 				for (int x = 0; x < 16; x++)
 					for (int y = 0; y < 16; y++)
 						for (int z = 0; z < 16; z++)
-							if (needObfuscate(world, chunkX, chunkZ, x, l | y, z)) {
-								int randomBlock = Options.worldOptions.getRandomID();
-								if (chunkX == -13 && chunkZ == 7)
-									System.out.println("nouveau bloc: " + randomBlock + " (" + x + "," + (l | y) + "," + z + ")" + " x:" + chunkX + " z:" + chunkZ);
+							if (needObfuscate(world, chunkX, chunkZ, x, l | y, z))
 								setBlockID(x, l | y, z, Options.worldOptions.getRandomID());
-							}
 			}
 		}
 

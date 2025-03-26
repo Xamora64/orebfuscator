@@ -67,8 +67,7 @@ public class PlayerHandler {
 	
     @SubscribeEvent
     public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
-    	//update(event.entityPlayer, event.x, event.y, event.z);
-    	System.out.println("x: " + ((event.x % 16) + 16) % 16 + " y: " + event.y + " z: " + ((event.z % 16) + 16) % 16);
+    	update(event.entityPlayer, event.x, event.y, event.z);
     }
     
     @SubscribeEvent
